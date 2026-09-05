@@ -38,6 +38,20 @@ enable_language(CXX)
 # TODO(crbug,com/389897612): Register tests with CTest. For now, we include this
 # only to pick up the standard |BUILD_TESTING| option.
 include(CTest)
+
+# Force testing off unconditionally: consumers building BoringSSL as a
+# library dependency (e.g. the `boring-sys` Rust crate) never invoke its own
+# unit tests or benchmarks. Cross-compiling in particular needs this: without
+# it, third_party/benchmark's own configure-time regex-backend probe (a
+# try_compile+try_run check) cannot execute a cross-compiled target binary on
+# the host and always fails ("Failed to determine the source files for the
+# regular expression backend"). A `-DBUILD_TESTING=OFF` passed on the cmake
+# command line does not reliably survive some toolchain files' own internal
+# cache-reset/reconfigure dance (e.g. the Android NDK's
+# android.toolchain.cmake), so force it here unconditionally instead of
+# relying on that external override.
+set(BUILD_TESTING OFF CACHE BOOL "" FORCE)
+
 include(GNUInstallDirs)
 
 set(INSTALL_ENABLED 1)
