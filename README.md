@@ -1,5 +1,51 @@
 # BoringSSL
 
+> **This is a fork of [google/boringssl](https://github.com/google/boringssl),
+> pinned as the `deps/boringssl` submodule of
+> [owenewans/owenboring](https://github.com/owenewans/owenboring) (itself a
+> fork of [cloudflare/boring](https://github.com/cloudflare/boring)),
+> maintained for [snolc](https://github.com/owenewans/snolc).**
+>
+> ### The one change
+>
+> [`CMakeLists.txt`](CMakeLists.txt) hard-sets
+> `set(BUILD_TESTING OFF CACHE BOOL "" FORCE)` immediately after
+> `include(CTest)`.
+>
+> `BUILD_TESTING` (the standard CTest option, defaulting `ON`) controls
+> whether this top-level `CMakeLists.txt` adds the `third_party/benchmark`
+> subdirectory. That subdirectory's own configure-time regex-backend probe
+> is a `try_compile` + `try_run` check, which cannot execute a
+> cross-compiled target binary on the build host and always fails with:
+>
+> ```
+> CMake Error at third_party/benchmark/CMakeLists.txt:325 (message):
+>   Failed to determine the source files for the regular expression backend
+> ```
+>
+> when cross-compiling (Android in particular, via `boring-sys`).
+> Passing `-DBUILD_TESTING=OFF` from the outside (e.g. from `boring-sys`'s
+> own build script) reaches the actual `cmake` invocation, but the Android
+> NDK's `android.toolchain.cmake` performs its own internal
+> cache-reset/reconfigure pass that does not reliably carry every
+> externally-passed `-D` flag through to the point where
+> `if(BUILD_TESTING)` is evaluated. Forcing it directly in this file, as a
+> `CACHE ... FORCE` write, is authoritative regardless of that.
+>
+> Consumers building BoringSSL as a library dependency only ever need
+> `libssl`/`libcrypto`; BoringSSL's own unit tests and benchmarks are never
+> invoked as part of a normal build, so this has no effect on the produced
+> library.
+>
+> Default branch: [`android-build-testing-off`](https://github.com/owenewans/owenboringssl/tree/android-build-testing-off),
+> based on upstream commit
+> [`e2a57cfb4`](https://github.com/google/boringssl/commit/e2a57cfb4d915b4ba820585aef9fdee7bca13fe5).
+> Everything else in this fork is unmodified upstream BoringSSL.
+>
+> Upstream project, for the real thing: **[google/boringssl](https://github.com/google/boringssl)**.
+
+---
+
 BoringSSL is a fork of OpenSSL that is designed to meet Google's needs.
 
 Although BoringSSL is an open source project, it is not intended for general
