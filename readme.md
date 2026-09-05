@@ -1,16 +1,20 @@
-# BoringSSL
+<div align="center">
 
-Fork of [google/boringssl](https://github.com/google/boringssl), pinned as
-the `deps/boringssl` submodule of
+# owenboringssl
+
+mirror of BoringSSL with `BUILD_TESTING` forced off, for cross-compiling `owenboring`/`boring-sys` to Android.
+
+<a href="https://count.owenewans.org/owenewans/owenboringssl?theme=moebooru-h&notitle"><img src="https://count.owenewans.org/owenewans/owenboringssl?theme=moebooru-h&notitle" alt="repository views"></a>
+
+`c++` `cmake` `boringssl` `android`
+
+</div>
+
+pinned as the `deps/boringssl` submodule of
 [owenboring](https://github.com/owenewans/owenboring) (itself a fork of
-[cloudflare/boring](https://github.com/cloudflare/boring)), maintained for
-[snolc](https://github.com/owenewans/snolc). Default branch is
-[`android-build-testing-off`](https://github.com/owenewans/owenboringssl/tree/android-build-testing-off),
-based on upstream commit
-[`e2a57cfb4`](https://github.com/google/boringssl/commit/e2a57cfb4d915b4ba820585aef9fdee7bca13fe5);
-everything outside the one change below is unmodified upstream BoringSSL.
+[cloudflare/boring](https://github.com/cloudflare/boring)).
 
-The one change: [`CMakeLists.txt`](CMakeLists.txt) hard-sets
+the one change: [`CMakeLists.txt`](CMakeLists.txt) hard-sets
 `set(BUILD_TESTING OFF CACHE BOOL "" FORCE)` immediately after
 `include(CTest)`. `BUILD_TESTING` (the standard CTest option, defaulting
 `ON`) controls whether this top-level `CMakeLists.txt` adds the
@@ -30,11 +34,22 @@ script) reaches the actual `cmake` invocation, but the Android NDK's
 pass that does not reliably carry every externally-passed `-D` flag through
 to where `if(BUILD_TESTING)` is evaluated. Forcing it directly in this file,
 as a `CACHE ... FORCE` write, is authoritative regardless of that.
-
 Consumers building BoringSSL as a library dependency only ever need
 `libssl`/`libcrypto`; BoringSSL's own unit tests and benchmarks are never
 invoked as part of a normal build, so this has no effect on the produced
 library.
+
+links:
+- upstream: [google/boringssl](https://github.com/google/boringssl)
+- used by: [owenboring](https://github.com/owenewans/owenboring), [snolc](https://github.com/owenewans/snolc)
+
+default branch is
+[`android-build-testing-off`](https://github.com/owenewans/owenboringssl/tree/android-build-testing-off),
+based on upstream commit
+[`e2a57cfb4`](https://github.com/google/boringssl/commit/e2a57cfb4d915b4ba820585aef9fdee7bca13fe5);
+everything outside the one change above is unmodified upstream BoringSSL.
+
+## BoringSSL
 
 BoringSSL is a fork of OpenSSL that is designed to meet Google's needs.
 
