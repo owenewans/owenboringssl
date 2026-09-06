@@ -2,11 +2,11 @@
 
 # owenboringssl
 
-mirror of BoringSSL with `BUILD_TESTING` forced off, for cross-compiling `owenboring`/`boring-sys` to Android.
+fork of boringssl with `build_testing` forced off for cross-compiles.
 
 <a href="https://count.owenewans.org/owenewans/owenboringssl?theme=moebooru-h&notitle"><img src="https://count.owenewans.org/owenewans/owenboringssl?theme=moebooru-h&notitle" alt="repository views"></a>
 
-`c++` `cmake` `boringssl` `android`
+`cpp` `tls` `library`
 
 </div>
 
@@ -48,6 +48,21 @@ default branch is
 based on upstream commit
 [`e2a57cfb4`](https://github.com/google/boringssl/commit/e2a57cfb4d915b4ba820585aef9fdee7bca13fe5);
 everything outside the one change above is unmodified upstream BoringSSL.
+
+## versioning
+
+That base commit is not an arbitrary pick off BoringSSL's `main`, and it is
+deliberately not BoringSSL's own latest release tag. `boring` `v5.2.0` --
+the release [owenboring](https://github.com/owenewans/owenboring) is built
+on -- vendors exactly `e2a57cfb4`, and `boring-sys` applies its own
+`patches/boring-pq.patch` on top of the source it vendors.
+
+Rebasing this fork onto a newer BoringSSL release tag breaks that patch, and
+the build fails with `patch does not apply` in
+`ssl/test/runner/key_update_tests.go`. So the revision here follows whatever
+`boring` pins: to move BoringSSL forward, move `owenboring` to a newer
+upstream `boring` release tag first and take its submodule revision from
+there.
 
 ## BoringSSL
 
